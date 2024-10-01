@@ -48,7 +48,9 @@ export default function Page() {
    * This function sends the original image to the Claid AI API for upscaling.
    */
   const handleUpscale = async () => {
-    if (!originalImage || !selectedFile) return;
+    if (!originalImage || !selectedFile) {
+      return;
+    }
 
     setIsUpscaling(true);
     setUpscaledImage(null);
