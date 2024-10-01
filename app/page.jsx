@@ -2,6 +2,7 @@
 import React from "react";
 import ImageUploader from "../components/ImageUploader";
 import ImageComparer from "../components/ImageComparer";
+import Image from "next/image";
 
 /**
  * Main Page component for the Image Upscaler application.
@@ -210,7 +211,7 @@ export default function Page() {
         ) : originalImage ? (
           <div>
             <h2 className="text-xl font-semibold mb-4 text-[#eaedef]">Original Image</h2>
-            <img src={originalImage} alt="Original" className="max-w-full rounded-lg" />
+            <Image src={originalImage} alt="Original" className="max-w-full rounded-lg" />
             <p className="mt-4 font-medium text-[#eaedef]">
               Size: {imageSize.width} x {imageSize.height} pixels
             </p>
