@@ -2,7 +2,7 @@
 import React from "react";
 import ImageUploader from "../components/ImageUploader";
 import ImageComparer from "../components/ImageComparer";
-import Image from "next/image";
+import { upscaleImage } from "../services/claidApi";
 
 /**
  * Main Page component for the Image Upscaler application.
@@ -57,57 +57,8 @@ export default function Page() {
     setErrorMessage(null);
 
     try {
-      console.log("Uploading image to Claid AI storage...");
-
-        // Create a FormData object and append the file and data
-        const formData = new FormData();
-        formData.append("file", selectedFile);
-        const dataPayload = {
-          operations: {
-            restorations: {
-              upscale: selectedOperation,
-            },
-          },
-          }
-        formData.append("data", JSON.stringify(dataPayload));
-
-      // Upload the image to Claid AI storage
-      const uploadResponse = await fetch(
-        "https://api.claid.ai/v1-beta1/image/edit/upload",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_CLAID_API_KEY}`,
-            // Note: Do not set 'Content-Type' header when sending FormData; browser will set it automatically
-          },
-          body: formData,
-        }
-      );
-      const uploadData = await uploadResponse.json();
-      console.log("Upload response:", JSON.stringify(uploadData, null, 2));
-
-      if (!uploadResponse.ok) {
-        let errorMessage = "An error occurred while uploading the image";
-        if (uploadData.error_message) {
-          errorMessage = uploadData.error_message;
-          if (uploadData.error_details) {
-            const details = Object.entries(uploadData.error_details)
-              .map(([key, value]) => `${key}: ${value.join(", ")}`)
-              .join("; ");
-            errorMessage += ` (${details})`;
-          }
-        }
-        throw new Error(errorMessage);
-      }
-
-      const processedImageUrl = uploadData.data?.output?.tmp_url;
-
-      if (processedImageUrl) {
-        setUpscaledImage(processedImageUrl);
-      } else {
-        console.error('Processed image URL not found in the response');
-        throw new Error("Processed image URL not found in the response")
-      }
+      const processedImageUrl = await upscaleImage(selectedFile, selectedOperation);
+      setUpscaledImage(processedImageUrl);
     } catch (error) {
       console.error('Error:', error);
       setErrorMessage(error.message);
@@ -200,20 +151,20 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="mt-8 py-4 px-4 w-full max-w-3xl rounded-[4px] flex justify-center items-center bg-opacity-[0.08] bg-[#eaedef] backdrop-filter backdrop-blur-lg">
+      <div className="mt-8 py-4 px-4 w-full max-w-3xl rounded-[4px] border border-[#eaedef]/25 flex justify-center items-center bg-opacity-[0.08] bg-[#eaedef] backdrop-filter backdrop-blur-lg">
         {originalImage && upscaledImage ? (
           <ImageComparer
             originalImage={originalImage}
             upscaledImage={upscaledImage}
             imageSize={imageSize}
             handleDownload={handleDownload}
-            className="rounded-lg"
+            className="rounded-[4px]"
           />
 
         ) : originalImage ? (
           <div>
             <h2 className="text-xl font-semibold mb-4 text-[#eaedef]">Original Image</h2>
-            <Image src={originalImage} alt="Original" className="max-w-full rounded-lg" />
+            <img src={originalImage} alt="Original" className="max-w-full rounded-[4px]" />
             <p className="mt-4 font-medium text-[#eaedef]">
               Size: {imageSize.width} x {imageSize.height} pixels
             </p>
