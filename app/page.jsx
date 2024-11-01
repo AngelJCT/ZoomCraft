@@ -71,7 +71,9 @@ export default function Page() {
    * Handles the download of the upscaled image.
    */
   const handleDownload = async () => {
-    if (!upscaledImage) return;
+    if (!upscaledImage) {
+      return;
+    }
   
     try {
       const response = await fetch(upscaledImage);
