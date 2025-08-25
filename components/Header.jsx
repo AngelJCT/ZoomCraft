@@ -4,7 +4,7 @@ import Link from 'next/link'; // If you're using Next.js routing
 
 const Header = () => {
   return (
-    <header className="w-full bg-[#111417] shadow border-b border-[#eaedef]/50 sticky top-0 transition-all">
+    <header className="w-full bg-[#111417] shadow border-b border-[#eaedef]/50 sticky top-0 z-20 transition-all">
       <div className="max-w-screen-xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo or Application Title */}
         <div className="text-2xl font-bold text-[#eaedef]">
